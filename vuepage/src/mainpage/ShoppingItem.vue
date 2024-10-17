@@ -1,15 +1,26 @@
 <script setup lang="ts">
 import { ElButton } from 'element-plus';
 import { useRouter } from 'vue-router';
-
+const router=useRouter()
 const props=defineProps([
     "imgurl",
     "title",
     "detail",
     "nowprice",
     "rawprice",
-    "itemid"
+    "itemid",
+    "type"
 ])
+
+function jumpToBuyPage(){
+    router.push("/buy?id="+props.itemid).catch(f=>{
+        console.log(f)
+    }).then(()=>{
+        console.log(router.currentRoute)
+        console.log(2)
+    })
+    console.log(11)
+}
 </script>
 
 <template>
@@ -35,7 +46,7 @@ const props=defineProps([
                 </div>
                 
                 <div class="shopping_buttons">
-                    <ElButton v-wave class="shopping_btn_buy" type="primary" @click="useRouter().push("/buy?id="+props.itemid)">
+                    <ElButton v-wave class="shopping_btn_buy" type="primary" @click="jumpToBuyPage">
                         购买
                     </ElButton> 
                 </div>

@@ -22,6 +22,32 @@ public class ItemsController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+
+    @RequestMapping("/get_item")
+    @CrossOrigin(origins = "*")
+    public String GetItem(@RequestParam("id") String id){
+        CheckDatabaseStatus();
+        SqlRowSet sqlRowSet=jdbcTemplate.queryForRowSet(String.format("SELECT * FROM `items` WHERE id = %s",id));
+        JSONObject result = new JSONObject();
+        if(sqlRowSet.next()){
+            result.put("status","OK");
+            result.put("result",new JSONObject(Map.ofEntries(
+                    Map.entry("imgurl", sqlRowSet.getString("imgurl")),
+                    Map.entry("nowprice", sqlRowSet.getFloat("nowprice")),
+                    Map.entry("rawprice", sqlRowSet.getFloat("rawprice")),
+                    Map.entry("title", sqlRowSet.getString("title")),
+                    Map.entry("detail", sqlRowSet.getString("detail")),
+                    Map.entry("id", sqlRowSet.getInt("id")),
+                    Map.entry("categories",sqlRowSet.getString("categories")),
+                    Map.entry("type",sqlRowSet.getInt("type")),
+                    Map.entry("introductions",sqlRowSet.getString("introductions"))
+            )));
+        }else{
+            result.put("status","ITEM_NOT_EXIST");
+        }
+        return result.toJSONString();
+    }
+
     @RequestMapping("/get_items")
     @CrossOrigin(origins = "*")
     public String GetItems() {
@@ -36,7 +62,8 @@ public class ItemsController {
                     Map.entry("rawprice", sqlRowSet.getFloat("rawprice")),
                     Map.entry("title", sqlRowSet.getString("title")),
                     Map.entry("detail", sqlRowSet.getString("detail")),
-                    Map.entry("id", sqlRowSet.getInt("id"))
+                    Map.entry("id", sqlRowSet.getInt("id")),
+                    Map.entry("type",sqlRowSet.getInt("type"))
             )));
         }
         result.put("data", resultSet);
@@ -50,14 +77,17 @@ public class ItemsController {
             @RequestParam("title") String title,
             @RequestParam("detail") String detail,
             @RequestParam("nowprice") String nowprice,
-            @RequestParam("rawprice") String rawprice) {
+            @RequestParam("rawprice") String rawprice,
+            @RequestParam("categories") String categories,
+            @RequestParam("type") String type,
+            @RequestParam("introductions") String introductions) {
         CheckDatabaseStatus();
         JSONObject result = new JSONObject();
         try {
             jdbcTemplate.execute(String.format("""
-                            INSERT INTO `items` (imgurl, title, detail, nowprice, rawprice) VALUES
-                            ('%s', '%s', '%s', %s, %s)"""
-                    , imgurl, title, detail, nowprice, rawprice));
+                            INSERT INTO `items` (imgurl, title, detail, nowprice, rawprice, categories, type, introductions) VALUES
+                            ('%s', '%s', '%s', %s, %s, '%s', %s, '%s')"""
+                    , imgurl, title, detail, nowprice, rawprice,categories,type,introductions));
             result.put("result", "OK");
             return result.toJSONString();
         } catch (Exception e) {
@@ -71,13 +101,16 @@ public class ItemsController {
     private void CheckDatabaseStatus() {
         if (!IsDatabaseExisted()) {
             jdbcTemplate.execute("""
-                    CREATE TABLE IF NOT EXISTS shopping.items (
+                    CREATE TABLE IF NOT EXISTS buyistic.items (
                     imgurl TEXT NOT NULL,
                     nowprice FLOAT NOT NULL,
                     rawprice FLOAT NOT NULL,
                     title TEXT NOT NULL,
                     detail TEXT NOT NULL,
-                    id INT PRIMARY KEY AUTO_INCREMENT
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    categories TEXT NOT NULL,
+                    type INT NOT NULL,
+                    introductions TEXT NOT NULL
                     ) CHARACTER SET utf8mb4""");
         }
     }

@@ -1,0 +1,27 @@
+{
+    "type":"categories",
+    "version":1,
+    "categories":[
+        {
+            "name":"尺码",
+            "items":[
+                {
+                    "name":"170",
+                    "type":1
+                },{
+                    "name":"175",
+                    "type":1
+                }
+            ]
+        },
+        {
+            "name":"颜色",
+            "items":[
+                {
+                    "name":"黄色",
+                    "type":1
+                }
+            ]
+        }
+    ]
+}

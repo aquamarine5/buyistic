@@ -1,24 +1,22 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import App from './App.vue'
 import VWave from 'v-wave'
-import BuyPage from './buypage/BuyPage.vue'
-import BackgroundPage from './background/BackgroundPage.vue'
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createWebHistory, createRouter } from 'vue-router'
+import MainPage from './mainpage/MainPage.vue'
+import App from './App.vue'
 
 const app = createApp(App)
 
-const routes=[
-    {path:'/', component: App},
-    {path:'/buy',component:BuyPage},
-    {path:'/background',component:BackgroundPage}
+const routes = [
+    { path: '/', component: MainPage, name:"app" },
+    { path: '/buy', component: ()=>import('@/buypage/BuyPage.vue') ,name:"buy"},
+    { path: '/background', component: ()=>import('@/background/BackgroundPage.vue'),name:"background" }
 ]
-const router=createRouter({
-    history:createMemoryHistory(),
-    routes
-}
-)
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes:routes
+})
 app.use(router)
 app.use(ElementPlus)
 app.use(VWave)

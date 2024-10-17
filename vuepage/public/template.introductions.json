@@ -1,0 +1,17 @@
+{
+    "type":"introductions",
+    "version":1,
+    "introductions":[
+        {
+            "type":"img",
+            "url":"s"
+        },{
+            "type":"img",
+            "url":"a"
+        },
+        {
+            "type":"text",
+            "content":"asa"
+        }
+    ]
+}
